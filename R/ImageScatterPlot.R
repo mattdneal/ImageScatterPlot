@@ -42,8 +42,8 @@ ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palet
   if (is.function(col.palette)) col.palette <- col.palette(bins)
   observed.cut <- matrix(cut(observed, bins, labels = F), nrow(observed))
   plot(Z, type="n", ...)
-  xwidth <- (max(latent[1,]) - min(latent[, 1])) / image.density
-  ywidth <- (max(latent[2,]) - min(latent[, 2])) / image.density
+  xwidth <- (max(latent[, 1]) - min(latent[, 1])) / image.density
+  ywidth <- (max(latent[, 2]) - min(latent[, 2])) / image.density
   max.plotted <- logical(nrow(latent))
   for (i in 1:num.attempts) {
     plotted <- logical(nrow(latent))
