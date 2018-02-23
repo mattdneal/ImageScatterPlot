@@ -12,7 +12,7 @@
 #'   for each row in \code{observed}. \code{prod(observed.dim) ==
 #'   ncol(observed)} must be true.
 #' @param bins The number of colors to generate from col.palette.
-#' @param col.palette A color palette function, such as rainbow or heat.colors.
+#' @param col.palette A color palette function, such as rainbow or heat.colors, or a vector of colors of length \code{bins}.
 #'   Default is \link[viridis]{viridis}.
 #' @param image.density How dense should the plotted images be. Higher
 #'   \code{image.density} means smaller images.
@@ -42,8 +42,8 @@ ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palet
   if (is.function(col.palette)) col.palette <- col.palette(bins)
   observed.cut <- matrix(cut(observed, bins, labels = F), nrow(observed))
   plot(Z, type="n", ...)
-  xwidth <- (max(latent[1,]) - min(latent[1,])) / image.density
-  ywidth <- (max(latent[2,]) - min(latent[2, ])) / image.density
+  xwidth <- (max(latent[1,]) - min(latent[, 1])) / image.density
+  ywidth <- (max(latent[2,]) - min(latent[, 2])) / image.density
   max.plotted <- logical(nrow(latent))
   for (i in 1:num.attempts) {
     plotted <- logical(nrow(latent))

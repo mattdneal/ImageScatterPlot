@@ -21,7 +21,7 @@ ncol(observed)} must be true.}
 
 \item{bins}{The number of colors to generate from col.palette.}
 
-\item{col.palette}{A color palette function, such as rainbow or heat.colors.
+\item{col.palette}{A color palette function, such as rainbow or heat.colors, or a vector of colors of length \code{bins}.
 Default is \link[viridis]{viridis}.}
 
 \item{image.density}{How dense should the plotted images be. Higher
