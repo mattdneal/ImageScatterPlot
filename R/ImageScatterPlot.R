@@ -27,8 +27,8 @@
 #' @examples
 #' #Plot PCA of the MNIST data
 #' mnist <- ImageScatterPlot::mnist
-#' Z <- prcomp(mnist)$x[,1:2]
-#' ImageScatterPlot(Z,
+#' latent <- prcomp(mnist)$x[,1:2]
+#' ImageScatterPlot(latent,
 #'                  mnist,
 #'                  rep(28,2),
 #'                  col.palette = grey.colors(256, start=1, end=0),
@@ -41,14 +41,14 @@ ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palet
   stopifnot(nrow(latent) == nrow(observed))
   if (is.function(col.palette)) col.palette <- col.palette(bins)
   observed.cut <- matrix(cut(observed, bins, labels = F), nrow(observed))
-  plot(Z, type="n", ...)
+  plot(latent, type="n", ...)
   xwidth <- (max(latent[, 1]) - min(latent[, 1])) / image.density
   ywidth <- (max(latent[, 2]) - min(latent[, 2])) / image.density
   max.plotted <- logical(nrow(latent))
   for (i in 1:num.attempts) {
     plotted <- logical(nrow(latent))
     for (i in sample(nrow(latent))) {
-      plotted.dist <- abs(t(t(Z[plotted, , drop=F]) - Z[i, ]))
+      plotted.dist <- abs(t(t(latent[plotted, , drop=F]) - latent[i, ]))
       if (!any(plotted.dist[, 1] < xwidth & plotted.dist[, 2] < ywidth)) {
         plotted[i] <- TRUE
       }
@@ -60,9 +60,9 @@ ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palet
 
   for (i in 1:nrow(latent)) {
     if (max.plotted[i]) {
-      xleft <- Z[i, 1] - xwidth/2
+      xleft <- latent[i, 1] - xwidth/2
       xright <- xleft + xwidth
-      ybottom <- Z[i, 2] - ywidth/2
+      ybottom <- latent[i, 2] - ywidth/2
       ytop <- ybottom + ywidth
       raster.matrix <- matrix(col.palette[observed.cut[i, ] ], nrow=observed.dim[1])
       rasterImage(raster.matrix, xleft, ybottom, xright, ytop, interpolate = interpolate)
