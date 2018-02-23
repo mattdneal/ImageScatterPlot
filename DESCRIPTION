@@ -1,7 +1,7 @@
 Package: ImageScatterPlot
 Type: Package
 Title: Produce Scatter Plots of Images
-Version: 1.2.0
+Version: 2.0.0
 Author: Matthew D. Neal
 Maintainer: Matthew D. Neal <matt@mattdneal.com>
 Description: Create a scatter plot of image data. Images are plotted in random order, and

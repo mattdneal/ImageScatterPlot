@@ -22,10 +22,11 @@
 #' @param ... Any additional parameters to be passed to \link{plot}.
 #' @param interpolate Whether to interpolate the plotted images (see
 #'   \link{rasterImage} for details)
-#' @param point.classes Classes of the points in \code{latent}, either as a
-#'   factor or numeric vector. If supplied, a coloured border is drawn around
-#'   each plotted image, with the colour corresponding to the class.
-#' @param border.width Line width for the borders. Ignored if \code{point.classes} is \code{NULL}.
+#' @param border.colors Colors for borders to be drawn around points, for
+#'   example to show class membership. If supplied, a colored border is drawn
+#'   around each plotted image. If a vector of integers is supplied, colors are
+#'   drawn from a colorblind-friendly palette (max 8 colors).
+#' @param border.width Line width for the borders, relative to default.
 #'
 #' @return A logical vector indicating which rows have been plotted (returned
 #'   invisibly).
@@ -51,12 +52,17 @@ ImageScatterPlot <- function(latent,
                              image.density=10,
                              num.attempts=100,
                              interpolate=F,
-                             point.classes=NULL,
+                             border.colors=NULL,
                              border.width= par("lwd"),
                              ...) {
   stopifnot(prod(observed.dim) == ncol(observed))
   stopifnot(nrow(latent) == nrow(observed))
   if (is.function(col.palette)) col.palette <- col.palette(bins)
+  cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+  if (is.numeric(border.colors)) {
+    stopifnot(max(border.colors) <= 8 & min(border.colors) >= 1 & all(border.colors %% 1 == 0))
+    border.colors <- cbbPalette[border.colors]
+  }
   observed.cut <- matrix(cut(observed, bins, labels = F), nrow(observed))
   plot(latent, type="n", ...)
   xwidth <- (max(latent[, 1]) - min(latent[, 1])) / image.density
@@ -77,15 +83,24 @@ ImageScatterPlot <- function(latent,
 
   for (i in 1:nrow(latent)) {
     if (max.plotted[i]) {
-      xleft <- latent[i, 1] - xwidth/2
-      xright <- xleft + xwidth
-      ybottom <- latent[i, 2] - ywidth/2
-      ytop <- ybottom + ywidth
+      if (!is.null(border.colors)) {
+        im.xwidth <- xwidth * (1 - 0.1 * min(border.width, 9))
+        im.ywidth <- ywidth * (1 - 0.1 * min(border.width, 9))
+        xleft <- latent[i, 1] - xwidth/2
+        xright <- xleft + xwidth
+        ybottom <- latent[i, 2] - ywidth/2
+        ytop <- ybottom + ywidth
+        rasterImage(border.colors[i], xleft, ybottom, xright, ytop)
+      } else {
+        im.xwidth <- xwidth
+        im.ywidth <- ywidth
+      }
+      xleft <- latent[i, 1] - im.xwidth/2
+      xright <- xleft + im.xwidth
+      ybottom <- latent[i, 2] - im.ywidth/2
+      ytop <- ybottom + im.ywidth
       raster.matrix <- matrix(col.palette[observed.cut[i, ] ], nrow=observed.dim[1])
       rasterImage(raster.matrix, xleft, ybottom, xright, ytop, interpolate = interpolate)
-      if (!is.null(point.classes)) {
-        rect(xleft, ybottom, xright, ytop, border=point.classes[i], lwd = border.width)
-      }
     }
   }
   invisible(max.plotted)
