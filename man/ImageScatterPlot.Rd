@@ -6,7 +6,7 @@
 \usage{
 ImageScatterPlot(latent, observed, observed.dim, bins = 256,
   col.palette = viridis::viridis, image.density = 10, num.attempts = 100,
-  interpolate = F, ...)
+  interpolate = F, point.classes = NULL, ...)
 }
 \arguments{
 \item{latent}{An n-by-2 matrix specifying where points in observed should be
@@ -21,14 +21,22 @@ ncol(observed)} must be true.}
 
 \item{bins}{The number of colors to generate from col.palette.}
 
-\item{col.palette}{A color palette function, such as rainbow or heat.colors, or a vector of colors of length \code{bins}.
-Default is \link[viridis]{viridis}.}
+\item{col.palette}{A color palette function, such as rainbow or heat.colors,
+or a vector of colors of length \code{bins}. Default is
+\link[viridis]{viridis}.}
 
 \item{image.density}{How dense should the plotted images be. Higher
 \code{image.density} means smaller images.}
 
 \item{num.attempts}{The number of non-overlapping plots to generate. The one
 which plots the most points will be chosen for the output plot.}
+
+\item{interpolate}{Whether to interpolate the plotted images (see
+\link{rasterImage} for details)}
+
+\item{point.classes}{Classes of the points in \code{latent}, either as a
+factor or numeric vector. If supplied, a coloured border is drawn around
+each plotted image, with the colour corresponding to the class.}
 
 \item{...}{Any additional parameters to be passed to \link{plot}.}
 }
@@ -44,8 +52,8 @@ the examples section for an example using MNIST data.
 \examples{
 #Plot PCA of the MNIST data
 mnist <- ImageScatterPlot::mnist
-Z <- prcomp(mnist)$x[,1:2]
-ImageScatterPlot(Z,
+latent <- prcomp(mnist)$x[,1:2]
+ImageScatterPlot(latent,
                  mnist,
                  rep(28,2),
                  col.palette = grey.colors(256, start=1, end=0),

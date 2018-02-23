@@ -12,13 +12,19 @@
 #'   for each row in \code{observed}. \code{prod(observed.dim) ==
 #'   ncol(observed)} must be true.
 #' @param bins The number of colors to generate from col.palette.
-#' @param col.palette A color palette function, such as rainbow or heat.colors, or a vector of colors of length \code{bins}.
-#'   Default is \link[viridis]{viridis}.
+#' @param col.palette A color palette function, such as rainbow or heat.colors,
+#'   or a vector of colors of length \code{bins}. Default is
+#'   \link[viridis]{viridis}.
 #' @param image.density How dense should the plotted images be. Higher
 #'   \code{image.density} means smaller images.
 #' @param num.attempts The number of non-overlapping plots to generate. The one
 #'   which plots the most points will be chosen for the output plot.
 #' @param ... Any additional parameters to be passed to \link{plot}.
+#' @param interpolate Whether to interpolate the plotted images (see
+#'   \link{rasterImage} for details)
+#' @param point.classes Classes of the points in \code{latent}, either as a
+#'   factor or numeric vector. If supplied, a coloured border is drawn around
+#'   each plotted image, with the colour corresponding to the class.
 #'
 #' @return A logical vector indicating which rows have been plotted (returned
 #'   invisibly).
@@ -36,7 +42,7 @@
 #'                  image.density=15,
 #'                  interpolate=T,
 #'                  main="First two principal components of MNIST handwritten digits")
-ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palette=viridis::viridis, image.density=10, num.attempts=100, interpolate=F, ...) {
+ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palette=viridis::viridis, image.density=10, num.attempts=100, interpolate=F, point.classes=NULL, ...) {
   stopifnot(prod(observed.dim) == ncol(observed))
   stopifnot(nrow(latent) == nrow(observed))
   if (is.function(col.palette)) col.palette <- col.palette(bins)
@@ -66,7 +72,11 @@ ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palet
       ytop <- ybottom + ywidth
       raster.matrix <- matrix(col.palette[observed.cut[i, ] ], nrow=observed.dim[1])
       rasterImage(raster.matrix, xleft, ybottom, xright, ytop, interpolate = interpolate)
+      if (!is.null(point.classes)) {
+        rect(xleft, ybottom, xright, ytop, border=point.classes[i])
+      }
     }
   }
   invisible(max.plotted)
 }
+
