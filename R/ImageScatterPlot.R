@@ -25,6 +25,7 @@
 #' @param point.classes Classes of the points in \code{latent}, either as a
 #'   factor or numeric vector. If supplied, a coloured border is drawn around
 #'   each plotted image, with the colour corresponding to the class.
+#' @param border.width Line width for the borders. Ignored if \code{point.classes} is \code{NULL}.
 #'
 #' @return A logical vector indicating which rows have been plotted (returned
 #'   invisibly).
@@ -42,7 +43,17 @@
 #'                  image.density=15,
 #'                  interpolate=T,
 #'                  main="First two principal components of MNIST handwritten digits")
-ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palette=viridis::viridis, image.density=10, num.attempts=100, interpolate=F, point.classes=NULL, ...) {
+ImageScatterPlot <- function(latent,
+                             observed,
+                             observed.dim,
+                             bins=256,
+                             col.palette=viridis::viridis,
+                             image.density=10,
+                             num.attempts=100,
+                             interpolate=F,
+                             point.classes=NULL,
+                             border.width= par("lwd"),
+                             ...) {
   stopifnot(prod(observed.dim) == ncol(observed))
   stopifnot(nrow(latent) == nrow(observed))
   if (is.function(col.palette)) col.palette <- col.palette(bins)
@@ -73,7 +84,7 @@ ImageScatterPlot <- function(latent, observed, observed.dim, bins=256, col.palet
       raster.matrix <- matrix(col.palette[observed.cut[i, ] ], nrow=observed.dim[1])
       rasterImage(raster.matrix, xleft, ybottom, xright, ytop, interpolate = interpolate)
       if (!is.null(point.classes)) {
-        rect(xleft, ybottom, xright, ytop, border=point.classes[i])
+        rect(xleft, ybottom, xright, ytop, border=point.classes[i], lwd = border.width)
       }
     }
   }

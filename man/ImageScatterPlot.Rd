@@ -6,7 +6,7 @@
 \usage{
 ImageScatterPlot(latent, observed, observed.dim, bins = 256,
   col.palette = viridis::viridis, image.density = 10, num.attempts = 100,
-  interpolate = F, point.classes = NULL, ...)
+  interpolate = F, point.classes = NULL, border.width = par("lwd"), ...)
 }
 \arguments{
 \item{latent}{An n-by-2 matrix specifying where points in observed should be
@@ -37,6 +37,8 @@ which plots the most points will be chosen for the output plot.}
 \item{point.classes}{Classes of the points in \code{latent}, either as a
 factor or numeric vector. If supplied, a coloured border is drawn around
 each plotted image, with the colour corresponding to the class.}
+
+\item{border.width}{Line width for the borders. Ignored if \code{point.classes} is \code{NULL}.}
 
 \item{...}{Any additional parameters to be passed to \link{plot}.}
 }
